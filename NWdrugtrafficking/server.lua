@@ -23,13 +23,26 @@ RegisterNetEvent("DrugTrafficking:NeedsPayment", function()
         print(string.format("^1Warning: Player %s requested payment without completing the job", GetPlayerName(src)))
         return
     end
+
     -- calculate amount of money to give to the player
     local amount = Config.DrugPay * deliveries[src]
-    -- give the money to player
-    -- if using another framework than ND, change the function below to your framework's
+
+    -- Retrieve current account information
+    local accountInfo = exports['money']:getaccount(src)
+
+    if accountInfo then
+        local newCash = (accountInfo.cash or 0) + amount
+        local updatedAccount = {
+            cash = newCash,
+            bank = accountInfo.bank or 0
+        }
+        local success = exports['money']:updateaccount(src, updatedAccount)
+        print(success and "Payment processed successfully" or "Failed to process payment")
+    else
+        print("Failed to retrieve player account information")
+    end
+
+    -- Reset delivery tracking
     deliveries[src] = 0
     playersOnJob[src] = false
-    local player = NDCore.getPlayer(src)
-    local success = player.addMoney("cash", amount, "Drug Trafficking Reward")
-    print(success)
 end)
