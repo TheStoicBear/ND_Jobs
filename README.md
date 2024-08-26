@@ -5,7 +5,6 @@
 This is still being completely re-worked. 
 Note issues can be reported too 
 
-https://discord.gg/jvC9uMDD82
 
 
 
