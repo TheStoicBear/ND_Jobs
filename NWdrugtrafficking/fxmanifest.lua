@@ -9,7 +9,6 @@ client_script 'client.lua'
 server_script 'server.lua'
 
 shared_scripts {
-    "@ND_Core/init.lua",
     'config.lua'
 }
 
