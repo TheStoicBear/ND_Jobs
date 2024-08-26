@@ -1,6 +1,6 @@
 --[[
 Created by Lama Development
-Eveloped by 5M-CodeX
+Developed by TheStoicBear
 ]] --
 
 -- Event handler for starting the Trash Collector job
@@ -10,9 +10,8 @@ RegisterNetEvent("TrashCollector:started", function(garbageTruck)
     if Config.UseND then
         if DoesEntityExist(garbageTruck) then
             local netId = NetworkGetNetworkIdFromEntity(garbageTruck)
-            exports["ND_VehicleSystem"]:giveAccess(player, garbageTruck, netId)
-            exports["ND_VehicleSystem"]:setVehicleOwned(player, { model = garbageTruck }, false)
-            exports["ND_VehicleSystem"]:giveKeys(garbageTruck, player, player) -- You need to define targetPlayer based on your logic
+            -- Assuming you have a way to handle vehicle access/keys
+            
         else
             print("Invalid garbage truck entity!")
         end
@@ -22,7 +21,19 @@ end)
 -- Event handler for giving reward to the player
 RegisterServerEvent('TrashCollector:GiveReward')
 AddEventHandler('TrashCollector:GiveReward', function(randomPayment)
-    local player = NDCore.getPlayer(source)
-    local success = player.addMoney("cash", randomPayment, "Trash Collection Reward")
-    print(success)
+    local playerId = source
+    -- Retrieve current account information
+    local accountInfo = exports['money']:getaccount(playerId)
+
+    if accountInfo then
+        local newCash = (accountInfo.cash or 0) + randomPayment
+        local updatedAccount = {
+            cash = newCash,
+            bank = accountInfo.bank or 0
+        }
+        local success = exports['money']:updateaccount(playerId, updatedAccount)
+        print(success and "Reward processed successfully" or "Failed to process reward")
+    else
+        print("Failed to retrieve player account information")
+    end
 end)
